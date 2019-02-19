@@ -1,0 +1,8 @@
+To allow fsl-imx8mq-delta.dtb to built into SD card image the following modification is needed
+
+Line to be added: 
+	KERNEL_DEVICETREE += "freescale/fsl-imx8mq-delta.dtb "
+
+file to modify:
+	meta-fsl-bsp-release/imx/meta-bsp/conf/machine/imx8mqevk.conf
+

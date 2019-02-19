@@ -1,0 +1,31 @@
+From 61bff02c6debe13f2f1cbe9fbb036f0d83b7cbc8 Mon Sep 17 00:00:00 2001
+From: btafesse <btafesse@mpr.com>
+Date: Thu, 31 Jan 2019 13:48:58 -0500
+Subject: [PATCH 1/2] increased temp limit
+
+---
+ arch/arm64/boot/dts/freescale/fsl-imx8mq.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/fsl-imx8mq.dtsi b/arch/arm64/boot/dts/freescale/fsl-imx8mq.dtsi
+index 5dd2ea1..9bf7567 100755
+--- a/arch/arm64/boot/dts/freescale/fsl-imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-imx8mq.dtsi
+@@ -418,12 +418,12 @@
+ 			thermal-sensors = <&tmu>;
+ 			trips {
+ 				cpu_alert0: trip0 {
+-					temperature = <85000>;
++					temperature = <125000>;
+ 					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 				cpu_crit0: trip1 {
+-					temperature = <95000>;
++					temperature = <125000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+-- 
+2.7.4
+

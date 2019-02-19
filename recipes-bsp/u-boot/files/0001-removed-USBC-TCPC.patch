@@ -1,0 +1,26 @@
+From 5756f7497c972d8e8658864227771d45a2ef8857 Mon Sep 17 00:00:00 2001
+From: btafesse <btafesse@mpr.com>
+Date: Tue, 29 Jan 2019 15:30:36 -0500
+Subject: [PATCH 1/2] removed USBC TCPC
+
+---
+ board/freescale/common/Kconfig | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/board/freescale/common/Kconfig b/board/freescale/common/Kconfig
+index e85e17e..40de07e 100644
+--- a/board/freescale/common/Kconfig
++++ b/board/freescale/common/Kconfig
+@@ -8,9 +8,3 @@ config CHAIN_OF_TRUST
+ 	default y
+ 
+ endif
+-
+-config USB_TCPC
+-	bool "USB Typec port controller simple driver"
+-	default n
+-	help
+-	  Enable USB type-c port controller (TCPC) driver
+-- 
+2.7.4
+

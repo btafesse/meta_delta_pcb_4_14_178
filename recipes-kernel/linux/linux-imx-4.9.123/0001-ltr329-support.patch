@@ -1,0 +1,182 @@
+From a43c1155d02a6c3f811399f773663578a94d0e20 Mon Sep 17 00:00:00 2001
+From: btafesse <btafesse@mpr.com>
+Date: Tue, 5 Feb 2019 18:55:13 -0500
+Subject: [PATCH] 20190205 ltr329 support
+
+---
+ drivers/iio/light/ltr501.c | 74 +++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 60 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/iio/light/ltr501.c b/drivers/iio/light/ltr501.c
+index c298fd8..3af472e 100644
+--- a/drivers/iio/light/ltr501.c
++++ b/drivers/iio/light/ltr501.c
+@@ -35,7 +35,9 @@
+ #define LTR501_PART_ID 0x86
+ #define LTR501_MANUFAC_ID 0x87
+ #define LTR501_ALS_DATA1 0x88 /* 16-bit, little endian */
++#define LTR501_ALS_DATA1_MSB 0x89
+ #define LTR501_ALS_DATA0 0x8a /* 16-bit, little endian */
++#define LTR501_ALS_DATA0_MSB 0x8b
+ #define LTR501_ALS_PS_STATUS 0x8c
+ #define LTR501_PS_DATA 0x8d /* 16-bit, little endian */
+ #define LTR501_INTR 0x8f /* output mode, polarity, mode */
+@@ -74,9 +76,9 @@ static const int int_time_mapping[] = {100000, 50000, 200000, 400000};
+ static const struct reg_field reg_field_it =
+ 				REG_FIELD(LTR501_ALS_MEAS_RATE, 3, 4);
+ static const struct reg_field reg_field_als_intr =
+-				REG_FIELD(LTR501_INTR, 1, 1);
+-static const struct reg_field reg_field_ps_intr =
+ 				REG_FIELD(LTR501_INTR, 0, 0);
++static const struct reg_field reg_field_ps_intr =
++				REG_FIELD(LTR501_INTR, 1, 1);
+ static const struct reg_field reg_field_als_rate =
+ 				REG_FIELD(LTR501_ALS_MEAS_RATE, 0, 2);
+ static const struct reg_field reg_field_ps_rate =
+@@ -97,6 +99,7 @@ enum {
+ 	ltr501 = 0,
+ 	ltr559,
+ 	ltr301,
++	ltr329,
+ };
+ 
+ struct ltr501_gain {
+@@ -180,7 +183,7 @@ static const struct ltr501_samp_table ltr501_ps_samp_table[] = {
+ 			{500000, 2000000}
+ };
+ 
+-static int ltr501_match_samp_freq(const struct ltr501_samp_table *tab,
++static unsigned int ltr501_match_samp_freq(const struct ltr501_samp_table *tab,
+ 					   int len, int val, int val2)
+ {
+ 	int i, freq;
+@@ -621,6 +624,18 @@ static const struct iio_chan_spec ltr301_channels[] = {
+ 	IIO_CHAN_SOFT_TIMESTAMP(2),
+ };
+ 
++static const struct iio_chan_spec ltr329_channels[] = {
++	LTR501_LIGHT_CHANNEL(),
++	LTR501_INTENSITY_CHANNEL(0, LTR501_ALS_DATA0, IIO_MOD_LIGHT_CLEAR, 0,
++				 NULL, 0),
++	LTR501_INTENSITY_CHANNEL(1, LTR501_ALS_DATA1, IIO_MOD_LIGHT_IR,
++				 BIT(IIO_CHAN_INFO_SCALE) |
++				 BIT(IIO_CHAN_INFO_INT_TIME) |
++				 BIT(IIO_CHAN_INFO_SAMP_FREQ),
++				 NULL, 0),
++	IIO_CHAN_SOFT_TIMESTAMP(2),
++};
++
+ static int ltr501_read_raw(struct iio_dev *indio_dev,
+ 			   struct iio_chan_spec const *chan,
+ 			   int *val, int *val2, long mask)
+@@ -1200,6 +1215,18 @@ static struct ltr501_chip_info ltr501_chip_info_tbl[] = {
+ 		.channels = ltr301_channels,
+ 		.no_channels = ARRAY_SIZE(ltr301_channels),
+ 	},
++	[ltr329] = {
++		.partid = 0x0a,
++		.als_gain = ltr559_als_gain_tbl,
++		.als_gain_tbl_size = ARRAY_SIZE(ltr559_als_gain_tbl),
++		.als_mode_active = BIT(0),
++		.als_gain_mask = BIT(2) | BIT(3) | BIT(4),
++		.als_gain_shift = 2,
++		.info = &ltr301_info,
++		.info_no_irq = &ltr301_info_no_irq,
++		.channels = ltr329_channels,
++		.no_channels = ARRAY_SIZE(ltr329_channels),
++	},
+ };
+ 
+ static int ltr501_write_contr(struct ltr501_data *data, u8 als_val, u8 ps_val)
+@@ -1210,7 +1237,9 @@ static int ltr501_write_contr(struct ltr501_data *data, u8 als_val, u8 ps_val)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return regmap_write(data->regmap, LTR501_PS_CONTR, ps_val);
++	if (data->chip_info->ps_gain)
++		return regmap_write(data->regmap, LTR501_PS_CONTR, ps_val);
++	return ret;
+ }
+ 
+ static irqreturn_t ltr501_trigger_handler(int irq, void *p)
+@@ -1305,19 +1334,21 @@ static int ltr501_init(struct ltr501_data *data)
+ 
+ 	data->als_contr = status | data->chip_info->als_mode_active;
+ 
+-	ret = regmap_read(data->regmap, LTR501_PS_CONTR, &status);
+-	if (ret < 0)
+-		return ret;
++	if (data->chip_info->ps_gain) {
++		ret = regmap_read(data->regmap, LTR501_PS_CONTR, &status);
++		if (ret < 0)
++			return ret;
+ 
+-	data->ps_contr = status | LTR501_CONTR_ACTIVE;
++		data->ps_contr = status | LTR501_CONTR_ACTIVE;
+ 
+-	ret = ltr501_read_intr_prst(data, IIO_INTENSITY, &data->als_period);
+-	if (ret < 0)
+-		return ret;
++		ret = ltr501_read_intr_prst(data, IIO_INTENSITY, &data->als_period);
++		if (ret < 0)
++			return ret;
+ 
+-	ret = ltr501_read_intr_prst(data, IIO_PROXIMITY, &data->ps_period);
+-	if (ret < 0)
+-		return ret;
++		ret = ltr501_read_intr_prst(data, IIO_PROXIMITY, &data->ps_period);
++		if (ret < 0)
++			return ret;
++	}
+ 
+ 	return ltr501_write_contr(data, data->als_contr, data->ps_contr);
+ }
+@@ -1326,7 +1357,9 @@ static bool ltr501_is_volatile_reg(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+ 	case LTR501_ALS_DATA1:
++	case LTR501_ALS_DATA1_MSB:
+ 	case LTR501_ALS_DATA0:
++	case LTR501_ALS_DATA0_MSB:
+ 	case LTR501_ALS_PS_STATUS:
+ 	case LTR501_PS_DATA:
+ 		return true;
+@@ -1535,6 +1568,7 @@ static const struct acpi_device_id ltr_acpi_match[] = {
+ 	{"LTER0501", ltr501},
+ 	{"LTER0559", ltr559},
+ 	{"LTER0301", ltr301},
++	{"LTR0329", ltr329},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(acpi, ltr_acpi_match);
+@@ -1543,15 +1577,27 @@ static const struct i2c_device_id ltr501_id[] = {
+ 	{ "ltr501", ltr501},
+ 	{ "ltr559", ltr559},
+ 	{ "ltr301", ltr301},
++	{ "ltr329", ltr329},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, ltr501_id);
+ 
++static const struct of_device_id ltr501_of_match[] = {
++	{ .compatible = "ltr501" },
++	{ .compatible = "ltr559" },
++	{ .compatible = "ltr301" },
++	{ .compatible = "ltr329" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, ltr501_of_match);
++
+ static struct i2c_driver ltr501_driver = {
+ 	.driver = {
+ 		.name   = LTR501_DRV_NAME,
+ 		.pm	= &ltr501_pm_ops,
+ 		.acpi_match_table = ACPI_PTR(ltr_acpi_match),
++		.owner  = THIS_MODULE,
++		.of_match_table = ltr501_of_match,
+ 	},
+ 	.probe  = ltr501_probe,
+ 	.remove	= ltr501_remove,
+-- 
+2.7.4
+

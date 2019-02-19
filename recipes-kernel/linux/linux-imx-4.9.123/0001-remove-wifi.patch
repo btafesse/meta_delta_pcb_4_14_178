@@ -1,0 +1,29 @@
+From 6ba192811d954da401fc4eafeb596611166a198c Mon Sep 17 00:00:00 2001
+From: btafesse <btafesse@mpr.com>
+Date: Wed, 13 Feb 2019 14:35:51 -0500
+Subject: [PATCH] 20190213 remove wifi
+
+---
+ arch/arm64/boot/dts/freescale/fsl-imx8mq-evk.dts | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/fsl-imx8mq-evk.dts b/arch/arm64/boot/dts/freescale/fsl-imx8mq-evk.dts
+index 95d78a2..7c301f4 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-imx8mq-evk.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-imx8mq-evk.dts
+@@ -20,12 +20,6 @@
+ 	model = "Freescale i.MX8MQ EVK";
+ 	compatible = "fsl,imx8mq-evk", "fsl,imx8mq";
+ 
+-	bcmdhd_wlan_0: bcmdhd_wlan@0 {
+-		compatible = "android,bcmdhd_wlan";
+-		bcmdhd_fw = "/lib/firmware/bcm/1CX_BCM4356/fw_bcmdhd.bin";
+-		bcmdhd_nv = "/lib/firmware/bcm/1CX_BCM4356/bcmdhd.cal";
+-	};
+-
+ 	chosen {
+ 		bootargs = "console=ttymxc0,115200 earlycon=ec_imx6q,0x30860000,115200";
+ 		stdout-path = &uart1;
+-- 
+2.7.4
+
