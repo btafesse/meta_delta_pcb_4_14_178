@@ -1,0 +1,41 @@
+From 1fee5f6a34350e8bda91e5863d824c35a2b77124 Mon Sep 17 00:00:00 2001
+From: btafesse <btafesse@mpr.com>
+Date: Mon, 25 Feb 2019 13:14:51 -0500
+Subject: [PATCH] modify camera driver
+
+---
+ drivers/media/platform/mxc/capture/ov5640_mipi_v2.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/mxc/capture/ov5640_mipi_v2.c b/drivers/media/platform/mxc/capture/ov5640_mipi_v2.c
+index 9e89d42..800d7ff 100644
+--- a/drivers/media/platform/mxc/capture/ov5640_mipi_v2.c
++++ b/drivers/media/platform/mxc/capture/ov5640_mipi_v2.c
+@@ -1698,11 +1698,13 @@ static int ov5640_probe(struct i2c_client *client,
+ 	sensor->streamcap.timeperframe.numerator = 1;
+ 
+ 	ov5640_regulator_enable(&client->dev);
+-
++	ov5640_power_down(sensor, 0);
++	
++/*
+ 	mutex_lock(&ov5640_mutex);
+ 	{
+ 		ov5640_reset(sensor);
+-		ov5640_power_down(sensor, 0);
++		
+ 		retval = ov5640_update_slave_id(sensor);
+ 	}
+ 	mutex_unlock(&ov5640_mutex);
+@@ -1710,7 +1712,7 @@ static int ov5640_probe(struct i2c_client *client,
+ 		clk_disable_unprepare(sensor->sensor_clk);
+ 		return -ENODEV;
+ 	}
+-
++*/
+ 	retval = ov5640_read_reg(sensor, OV5640_CHIP_ID_HIGH_BYTE,
+ 				 &chip_id_high);
+ 	if (retval < 0 || chip_id_high != 0x56) {
+-- 
+2.7.4
+

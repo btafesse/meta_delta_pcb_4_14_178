@@ -1,5 +1,5 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-${PV}:"
-# Delta board 00.02.000
+# Delta board 00.02.001
 
 #modify fsl-imx8mq.dtsi to increases temp limit
 SRC_URI += "file://0001-increased-temp-limit.patch"
@@ -17,6 +17,13 @@ SRC_URI += "file://0001-ltr329-support.patch"
 
 #modify defconfig (needed for ltr329, accelerometer, wifi)
 SRC_URI += "file://0001-configuration-update.patch"
+
+#add LCD driver
+SRC_URI +="file://0001-lcd-driver-update.patch"
+SRC_URI +="file://0001-LCD-addition-to-device-tree.patch"
+
+#modify OV5640 driver to support both cameras
+SRC_URI +="file://0001-modify-camera-driver.patch"
 
 addtask copy_defconfig_after_patch after do_patch before do_configure
 do_copy_defconfig_after_patch () {
