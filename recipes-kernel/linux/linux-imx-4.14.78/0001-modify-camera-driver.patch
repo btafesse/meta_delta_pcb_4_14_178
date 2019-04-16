@@ -1,6 +1,6 @@
-From 1fee5f6a34350e8bda91e5863d824c35a2b77124 Mon Sep 17 00:00:00 2001
+From 1e5abdda9d799a8c9c6fb16e32dba0c75b34d935 Mon Sep 17 00:00:00 2001
 From: btafesse <btafesse@mpr.com>
-Date: Mon, 25 Feb 2019 13:14:51 -0500
+Date: Fri, 5 Apr 2019 16:01:32 -0400
 Subject: [PATCH] modify camera driver
 
 ---
@@ -8,10 +8,10 @@ Subject: [PATCH] modify camera driver
  1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/media/platform/mxc/capture/ov5640_mipi_v2.c b/drivers/media/platform/mxc/capture/ov5640_mipi_v2.c
-index 9e89d42..800d7ff 100644
+index 1cb3d69..4f73388 100644
 --- a/drivers/media/platform/mxc/capture/ov5640_mipi_v2.c
 +++ b/drivers/media/platform/mxc/capture/ov5640_mipi_v2.c
-@@ -1698,11 +1698,13 @@ static int ov5640_probe(struct i2c_client *client,
+@@ -1696,11 +1696,13 @@ static int ov5640_probe(struct i2c_client *client,
  	sensor->streamcap.timeperframe.numerator = 1;
  
  	ov5640_regulator_enable(&client->dev);
@@ -27,7 +27,7 @@ index 9e89d42..800d7ff 100644
  		retval = ov5640_update_slave_id(sensor);
  	}
  	mutex_unlock(&ov5640_mutex);
-@@ -1710,7 +1712,7 @@ static int ov5640_probe(struct i2c_client *client,
+@@ -1708,7 +1710,7 @@ static int ov5640_probe(struct i2c_client *client,
  		clk_disable_unprepare(sensor->sensor_clk);
  		return -ENODEV;
  	}

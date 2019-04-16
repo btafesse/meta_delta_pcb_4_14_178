@@ -1,17 +1,17 @@
-From 6f25b52d4db402d89aa04c912c058f1c6a8809df Mon Sep 17 00:00:00 2001
+From 8ba43715989870ea84d010ad0c1a1d561893af91 Mon Sep 17 00:00:00 2001
 From: btafesse <btafesse@mpr.com>
-Date: Tue, 5 Feb 2019 18:46:48 -0500
-Subject: [PATCH] 20190205 - modify dts makefile
+Date: Fri, 5 Apr 2019 18:28:30 -0400
+Subject: [PATCH] modify dts makefile
 
 ---
  arch/arm64/boot/dts/freescale/Makefile | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index add632d..a16fcb3 100644
+index fcbca40..0a0e4cb 100644
 --- a/arch/arm64/boot/dts/freescale/Makefile
 +++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -73,6 +73,7 @@ dtb-$(CONFIG_ARCH_FSL_IMX8MQ) += fsl-imx8mq-ddr3l-arm2.dtb \
+@@ -94,6 +94,7 @@ dtb-$(CONFIG_ARCH_FSL_IMX8MQ) += fsl-imx8mq-ddr3l-arm2.dtb \
  				 fsl-imx8mq-ddr4-arm2.dtb \
  				 fsl-imx8mq-ddr4-arm2-gpmi-nand.dtb \
  				 fsl-imx8mq-evk.dtb \

@@ -1,27 +1,17 @@
-From c17add3d7b4dd81b0f11f8f65afbb26f4cbd7f1d Mon Sep 17 00:00:00 2001
+From 7db7bfe88966f78057526ec73ff840942fa7b64b Mon Sep 17 00:00:00 2001
 From: btafesse <btafesse@mpr.com>
-Date: Tue, 29 Jan 2019 16:56:32 -0500
+Date: Fri, 5 Apr 2019 19:22:42 -0400
 Subject: [PATCH] modified device tree
 
 ---
- arch/arm/dts/fsl-imx8mq-evk.dts | 198 ++++++++++------------------------------
- 1 file changed, 47 insertions(+), 151 deletions(-)
+ arch/arm/dts/fsl-imx8mq-evk.dts | 206 ++++++++--------------------------------
+ 1 file changed, 39 insertions(+), 167 deletions(-)
 
 diff --git a/arch/arm/dts/fsl-imx8mq-evk.dts b/arch/arm/dts/fsl-imx8mq-evk.dts
-index 4213a37..db0e7cd 100644
+index 6e67596..3cbc119 100644
 --- a/arch/arm/dts/fsl-imx8mq-evk.dts
 +++ b/arch/arm/dts/fsl-imx8mq-evk.dts
-@@ -11,6 +11,9 @@
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-+ *
-+ *  Delta u-boot version 00.01.000	 
-+ *
-  */
- 
- /dts-v1/;
-@@ -24,12 +27,6 @@
+@@ -24,12 +24,6 @@
  	model = "Freescale i.MX8MQ EVK";
  	compatible = "fsl,imx8mq-evk", "fsl,imx8mq";
  
@@ -34,7 +24,7 @@ index 4213a37..db0e7cd 100644
  	chosen {
  		bootargs = "console=ttymxc0,115200 earlycon=ec_imx6q,0x30860000,115200";
  		stdout-path = &uart1;
-@@ -50,29 +47,23 @@
+@@ -50,65 +44,39 @@
  		};
  	};
  
@@ -69,6 +59,8 @@ index 4213a37..db0e7cd 100644
  		audio-routing =
 -			"Line Out Jack", "LINEVOUTL",
 -			"Line Out Jack", "LINEVOUTR";
++ 			"Line Out Jack", "LINEVOUTL",
++			"Line Out Jack", "LINEVOUTR",
 +			"Headphone Jack", "HP_L",
 +			"Headphone Jack", "HP_R",
 +			"Ext Spk", "SPK_LP",
@@ -79,18 +71,21 @@ index 4213a37..db0e7cd 100644
 +			"Main MIC", "MICB";
  	};
  
- 	pwmleds {
-@@ -84,32 +75,20 @@
- 			max-brightness = <255>;
- 		};
- 	};
-+	
+-	pwmleds {
+-		compatible = "pwm-leds";
+-
+-		ledpwm2 {
+-			label = "PWM2";
+-			pwms = <&pwm2 0 50000>;
+-			max-brightness = <255>;
+-		};
+-	};
 +	gpio-poweroff {
 +		compatible = "gpio-poweroff";
 +		pinctrl-names = "default";
 +		pinctrol-0 = <&pinctrl_poweroff>;		
 +		gpios = <&gpio5 11 GPIO_ACTIVE_LOW>;
-+		};
++ 	};
  };
  
  &iomuxc {
@@ -116,19 +111,15 @@ index 4213a37..db0e7cd 100644
 -				MX8MQ_IOMUXC_GPIO1_IO09_GPIO1_IO9	0x19
 -			>;
 -		};
--
-+		
+ 
  		pinctrl_i2c1: i2c1grp {
  			fsl,pins = <
- 				MX8MQ_IOMUXC_I2C1_SCL_I2C1_SCL			0x4000007f
-@@ -123,21 +102,17 @@
- 				MX8MQ_IOMUXC_I2C2_SDA_I2C2_SDA			0x4000007f
+@@ -124,26 +92,16 @@
  			>;
  		};
--
+ 
 -
 -		pinctrl_pcie0: pcie0grp {
-+		
 +		pinctrl_i2c4: i2c4grp {
  			fsl,pins = <
 -				MX8MQ_IOMUXC_I2C4_SCL_GPIO5_IO20	0x16
@@ -138,19 +129,24 @@ index 4213a37..db0e7cd 100644
 +				MX8MQ_IOMUXC_I2C4_SDA_I2C4_SDA			0x4000007f
  			>;
  		};
--
+ 
 -		pinctrl_pcie1: pcie1grp {
-+		
 +		pinctrl_poweroff: poweroff {
  			fsl,pins = <
 -				MX8MQ_IOMUXC_I2C4_SDA_GPIO5_IO21	0x16
 -				MX8MQ_IOMUXC_ECSPI2_SCLK_GPIO5_IO10	0x16
 -				MX8MQ_IOMUXC_ECSPI2_MISO_GPIO5_IO12	0x16
-+				MX8MQ_IOMUXC_ECSPI2_MOSI_GPIO5_IO11 		0x59
+-			>;
+-		};
+-
+-		pinctrl_pwm2: pwm2grp {
+-			fsl,pins = <
+-				MX8MQ_IOMUXC_GPIO1_IO13_PWM2_OUT	0x16
++				MX8MQ_IOMUXC_ECSPI2_MOSI_GPIO5_IO11 		0x47
  			>;
  		};
  
-@@ -288,27 +263,6 @@
+@@ -288,27 +246,6 @@
  	};
  };
  
@@ -178,7 +174,7 @@ index 4213a37..db0e7cd 100644
  &i2c1 {
  	clock-frequency = <100000>;
  	pinctrl-names = "default";
-@@ -401,20 +355,6 @@
+@@ -401,20 +338,6 @@
  		};
  	};
  
@@ -199,28 +195,34 @@ index 4213a37..db0e7cd 100644
  };
  
  &i2c2 {
-@@ -424,24 +364,22 @@
+@@ -424,28 +347,19 @@
  	status = "disabled";
  };
  
 -&pcie0{
-+&i2c4 {
-+	clock-frequency = <100000>;
- 	pinctrl-names = "default";
+-	pinctrl-names = "default";
 -	pinctrl-0 = <&pinctrl_pcie0>;
 -	clkreq-gpio = <&gpio5 20 GPIO_ACTIVE_LOW>;
 -	disable-gpio = <&gpio5 29 GPIO_ACTIVE_LOW>;
 -	reset-gpio = <&gpio5 28 GPIO_ACTIVE_LOW>;
-+	pinctrl-0 = <&pinctrl_i2c4>;
- 	status = "okay";
+-	status = "okay";
 -};
- 
+-
 -&pcie1{
--	pinctrl-names = "default";
++&i2c4 {
++	clock-frequency = <100000>;
+ 	pinctrl-names = "default";
 -	pinctrl-0 = <&pinctrl_pcie1>;
 -	clkreq-gpio = <&gpio5 21 GPIO_ACTIVE_LOW>;
 -	disable-gpio = <&gpio5 10 GPIO_ACTIVE_LOW>;
 -	reset-gpio = <&gpio5 12 GPIO_ACTIVE_LOW>;
++	pinctrl-0 = <&pinctrl_i2c4>;
+ 	status = "okay";
+-};
+ 
+-&pwm2 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_pwm2>;
 -	status = "okay";
 +	wm8960: codec@1a {
 +		compatible = "wlf,wm8960";
@@ -228,14 +230,11 @@ index 4213a37..db0e7cd 100644
 +		clock-names = "mclk";
 +		clocks = <&clk IMX8MQ_CLK_SAI2_SRC>;
 +		wlf,shared-lrclk;
-+	};	
++	};
  };
  
-+
- &pwm2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_pwm2>;
-@@ -456,37 +394,6 @@
+ &uart1 { /* console */
+@@ -456,36 +370,6 @@
  	status = "okay";
  };
  
@@ -269,11 +268,10 @@ index 4213a37..db0e7cd 100644
 -		};
 -	};
 -};
--
+ 
  &qspi {
  	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_qspi>;
-@@ -502,16 +409,6 @@
+@@ -502,24 +386,12 @@
  	};
  };
  
@@ -287,28 +285,17 @@ index 4213a37..db0e7cd 100644
 -		};
 -	};
 -};
- 
+-
  &uart3 { /* BT */
  	pinctrl-names = "default";
-@@ -519,8 +416,7 @@
+ 	pinctrl-0 = <&pinctrl_uart3>;
  	assigned-clocks = <&clk IMX8MQ_CLK_UART3_SRC>;
  	assigned-clock-parents = <&clk IMX8MQ_SYS1_PLL_80M>;
  	fsl,uart-has-rtscts;
 -	resets = <&modem_reset>;
--	status = "okay";
-+	status = "disabled";
- };
- 
- &usdhc1 {
-@@ -554,7 +450,7 @@
- 
- &usb_dwc3_0 {
  	status = "okay";
--	dr_mode = "peripheral";
-+	dr_mode = "host";
  };
  
- &usb3_phy1 {
 -- 
 2.7.4
 

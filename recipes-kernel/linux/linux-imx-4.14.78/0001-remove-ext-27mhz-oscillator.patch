@@ -1,0 +1,26 @@
+From 1ec76dd80de67b19963dc1c57429f33b4557fe69 Mon Sep 17 00:00:00 2001
+From: btafesse <btafesse@mpr.com>
+Date: Wed, 10 Apr 2019 11:22:47 -0400
+Subject: [PATCH] remove ext 27mhz oscillator
+
+---
+ drivers/gpu/drm/imx/hdp/API_AFE_t28hpc_hdmitx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/imx/hdp/API_AFE_t28hpc_hdmitx.c b/drivers/gpu/drm/imx/hdp/API_AFE_t28hpc_hdmitx.c
+index 3b11545..adbbbe3 100644
+--- a/drivers/gpu/drm/imx/hdp/API_AFE_t28hpc_hdmitx.c
++++ b/drivers/gpu/drm/imx/hdp/API_AFE_t28hpc_hdmitx.c
+@@ -694,7 +694,8 @@ int phy_cfg_hdp_t28hpc(state_struct *state,
+ 	 * on the cmn_ref_clk_int pin: PHY_PMA_CMN_CTRL1[6:4]=3'b011 */
+ 	/* for differential clock on the refclk_p and
+ 	 * refclk_m off chip pins: PHY_PMA_CMN_CTRL1[6:4]=3'b000 */
+-	reg_val |= 0x0000;
++	//reg_val |= 0x0000;
++	reg_val |= 0x0030;
+ 	Afe_write(state, 0xC800, reg_val);
+ 
+ 	/*register CMN_DIAG_ACYA */
+-- 
+2.7.4
+

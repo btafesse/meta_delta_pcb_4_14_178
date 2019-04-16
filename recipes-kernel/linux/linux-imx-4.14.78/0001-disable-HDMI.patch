@@ -1,0 +1,32 @@
+From 798d04dece4f1d2981561c42c21427548a4840a8 Mon Sep 17 00:00:00 2001
+From: btafesse <btafesse@mpr.com>
+Date: Fri, 5 Apr 2019 18:26:46 -0400
+Subject: [PATCH] disable HDMI
+
+---
+ arch/arm64/boot/dts/freescale/fsl-imx8mq-evk.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/fsl-imx8mq-evk.dts b/arch/arm64/boot/dts/freescale/fsl-imx8mq-evk.dts
+index a9d93cb..4574362 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-imx8mq-evk.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-imx8mq-evk.dts
+@@ -920,13 +920,13 @@
+ };
+ 
+ &dcss {
+-	status = "okay";
++	status = "disabled";
+ 
+ 	disp-dev = "hdmi_disp";
+ };
+ 
+ &hdmi {
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &csi1_bridge {
+-- 
+2.7.4
+

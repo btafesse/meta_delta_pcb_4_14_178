@@ -1,17 +1,17 @@
-From 6ff1311e8b9d7da87d2e758c5171ff45c6f582ab Mon Sep 17 00:00:00 2001
+From 7fc57541eb026c45a709ad8993121c7a6c5d6dd6 Mon Sep 17 00:00:00 2001
 From: btafesse <btafesse@mpr.com>
-Date: Tue, 29 Jan 2019 15:56:36 -0500
+Date: Fri, 5 Apr 2019 14:52:40 -0400
 Subject: [PATCH] increased temp limit
 
 ---
- arch/arm/dts/fsl-imx8mq.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/dts/fsl-imx8mq.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/dts/fsl-imx8mq.dtsi b/arch/arm/dts/fsl-imx8mq.dtsi
-index 8e27a0e..deac59d 100644
+index bf32df6..d7ae4fc 100644
 --- a/arch/arm/dts/fsl-imx8mq.dtsi
 +++ b/arch/arm/dts/fsl-imx8mq.dtsi
-@@ -280,14 +280,14 @@
+@@ -280,12 +280,12 @@
  			thermal-sensors = <&tmu>;
  			trips {
  				cpu_alert0: trip0 {
@@ -24,11 +24,8 @@ index 8e27a0e..deac59d 100644
 -					temperature = <95000>;
 +					temperature = <125000>;
  					hysteresis = <2000>;
--					type = "critical";
-+					type = "passive";
+ 					type = "critical";
  				};
- 			};
- 
 -- 
 2.7.4
 

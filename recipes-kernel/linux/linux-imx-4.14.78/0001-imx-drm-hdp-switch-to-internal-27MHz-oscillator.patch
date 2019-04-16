@@ -1,0 +1,40 @@
+From 0b6cdd2b56a8068cb0de8f34d5a20c88807f166b Mon Sep 17 00:00:00 2001
+From: Laurentiu Palcu <laurentiu.palcu@nxp.com>
+Date: Wed, 10 Apr 2019 09:38:47 +0300
+Subject: [PATCH] imx/drm/hdp: switch to internal 27MHz oscillator
+
+Signed-off-by: Laurentiu Palcu <laurentiu.palcu@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/fsl-imx8mq.dtsi   | 2 +-
+ drivers/gpu/drm/imx/hdp/API_AFE_t28hpc_hdmitx.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/fsl-imx8mq.dtsi b/arch/arm64/boot/dts/freescale/fsl-imx8mq.dtsi
+index 669f712..c5b0773 100755
+--- a/arch/arm64/boot/dts/freescale/fsl-imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-imx8mq.dtsi
+@@ -554,7 +554,7 @@
+ 			 <&clk IMX8MQ_VIDEO2_PLL_OUT>,
+ 			 <&clk IMX8MQ_CLK_DISP_DTRC>,
+ 			 <&clk IMX8MQ_VIDEO2_PLL1_REF_SEL>,
+-			 <&clk IMX8MQ_CLK_PHY_27MHZ>;
++			 <&clk IMX8MQ_CLK_27M>;
+ 		clock-names = "apb", "axi", "rtrm", "pix",
+ 			"dtrc", "pll", "pll_src1";
+ 		assigned-clocks = <&clk IMX8MQ_CLK_DC_PIXEL>,
+diff --git a/drivers/gpu/drm/imx/hdp/API_AFE_t28hpc_hdmitx.c b/drivers/gpu/drm/imx/hdp/API_AFE_t28hpc_hdmitx.c
+index 3b11545..b2ab67a 100644
+--- a/drivers/gpu/drm/imx/hdp/API_AFE_t28hpc_hdmitx.c
++++ b/drivers/gpu/drm/imx/hdp/API_AFE_t28hpc_hdmitx.c
+@@ -694,7 +694,7 @@ int phy_cfg_hdp_t28hpc(state_struct *state,
+ 	 * on the cmn_ref_clk_int pin: PHY_PMA_CMN_CTRL1[6:4]=3'b011 */
+ 	/* for differential clock on the refclk_p and
+ 	 * refclk_m off chip pins: PHY_PMA_CMN_CTRL1[6:4]=3'b000 */
+-	reg_val |= 0x0000;
++	reg_val |= 0x0030;
+ 	Afe_write(state, 0xC800, reg_val);
+ 
+ 	/*register CMN_DIAG_ACYA */
+-- 
+2.7.4
+
